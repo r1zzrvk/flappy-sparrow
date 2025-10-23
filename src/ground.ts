@@ -1,15 +1,15 @@
-import * as ex from "excalibur";
 import { Resources } from "./resources";
 import { Config } from "../config";
+import { Actor, Engine, vec, Vector } from "excalibur";
 
-export class Ground extends ex.Actor {
+export class Ground extends Actor {
   moving = false;
   groundSprite = Resources.GroundImage.toSprite();
 
-  constructor(pos: ex.Vector) {
+  constructor(pos: Vector) {
     super({
       pos,
-      anchor: ex.vec(0,0),
+      anchor: vec(0,0),
       height: 100,
       width: 1000,
       z: 1,
@@ -24,14 +24,14 @@ export class Ground extends ex.Actor {
     this.moving = false;
   }
 
-  onInitialize(engine: ex.Engine): void {
+  onInitialize(engine: Engine): void {
     this.groundSprite.sourceView.width = engine.screen.drawWidth;
     this.groundSprite.destSize.width = engine.screen.drawWidth;
 
     this.graphics.use(this.groundSprite);
   }
 
-  override onPostUpdate(engine: ex.Engine, elapsed: number): void {
+  override onPostUpdate(_engine: Engine, elapsed: number): void {
     if (!this.moving) return 
 
     this.groundSprite.sourceView.x += Config.PipeSpeed * (elapsed / 1000);

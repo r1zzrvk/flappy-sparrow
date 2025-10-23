@@ -1,75 +1,23 @@
-import * as ex from 'excalibur';
+
 import { Bird } from './bird';
 import { Ground } from './ground';
 import { PipeFactory } from './pipe-factory';
 import { Config } from '../config';
 import { Resources } from './resources';
+import { Menu } from './menu';
+import { Scoreboard } from './scoreboard';
+import { Background } from './background';
+import { Engine, KeyEvent, Keys, Random, Scene, vec } from 'excalibur';
 
-// TODO:
-// Добавить бекграунд облаков, других птиц, деревьев и солнца
-// Добавить очки
-// Добавить меню
-// Добавить паузу, рестарт, настройки звуки
+export class Level extends Scene {
 
-export class Level extends ex.Scene {
-  backgroundSprite = Resources.BackgroundImage.toSprite();
-  backgroundOffset: number = 0;
-  backgroundSpeed: number = 20; // pixels per second
-
-  // scoring
-  score: number = 0;
-  bestScore: number = 0;
-  scoreLabel = new ex.Label({
-    text: 'Score: 0',
-    x: 0,
-    y: 0,
-    z: 1,
-    font: new ex.Font({
-      size: 20,
-      color: ex.Color.White,
-    }),
-  });
-  bestScoreLabel = new ex.Label({
-    text: 'Best Score: 0',
-    x: 400,
-    y: 0,
-    z: 1,
-    font: new ex.Font({
-      size: 20,
-      color: ex.Color.White,
-      textAlign: ex.TextAlign.End,
-    }),
-  });
-  // scoring
-
-  // pipes
-  random = new ex.Random();
-  pipeFactory = new PipeFactory(this, this.random, Config.PipeInterval);
-  // pipes
-
-  // actors
+  background = new Background();
+  random = new Random()
+  scoreboard = new Scoreboard();
+  pipeFactory = new PipeFactory(this, this.random, Config.PipeInterval, this.scoreboard);
   bird: Bird = new Bird(this);
   ground!: Ground;
-  // actors
-
-  // menu
-  startGameLabel = new ex.Label({
-    text: 'Tap to Start',
-    x: 200,
-    y: 200,
-    z: 2,
-    font: new ex.Font({
-      size: 30,
-      color: ex.Color.White,
-    }),
-  });
-  // menu
-
-  background = new ex.Actor({
-    pos: ex.vec(0, 0),
-    anchor: ex.vec(0, 0.1),
-    z: -2,
-  });
+  menu = new Menu(vec(0, 0), this);
 
 
   override onActivate(): void {
@@ -77,76 +25,59 @@ export class Level extends ex.Scene {
     Resources.BackgroundMusic.volume = 0.5;
   }
 
-  override onPreUpdate(engine: ex.Engine, delta: number): void {
-    // Scroll background slowly to the left
-    this.backgroundOffset += (this.backgroundSpeed * delta) / 1000;
+  override onInitialize(engine: Engine): void {
 
-    // Use sourceView to create scrolling effect
-    const imageWidth = Resources.BackgroundImage.width;
-    this.backgroundSprite.sourceView.x = this.backgroundOffset % imageWidth;
-  }
-
-  override onInitialize(engine: ex.Engine): void {
+    this.ground = new Ground(vec(0, engine.screen.drawHeight - 64));
 
     this.add(this.bird);
-    this.add(this.startGameLabel);
+    this.add(this.menu);
     this.add(this.background);
-    this.add(this.scoreLabel);
-    this.add(this.bestScoreLabel);
-   
-    this.ground = new Ground(ex.vec(0, engine.screen.drawHeight - 64));
+    this.add(this.scoreboard);
     this.add(this.ground)
-  
-    this.background.graphics.use(this.backgroundSprite);
-
-    const bestScore = localStorage.getItem('bestScore');
-    if (bestScore) {
-      this.bestScore = +bestScore;
-      this.setBestScore(Number(bestScore));
-    } else {
-      this.setBestScore(0);
-    }
+    
+    this.showMenu();
   }
 
-  showStartInstructions() {
-    this.startGameLabel.graphics.isVisible = true;
-    this.engine.input.pointers.once('down', () => {
-      this.reset();
+  showMenu() {
+    this.menu.show();
 
-      this.startGameLabel.graphics.isVisible = false;
-      this.bird.start();
-      this.pipeFactory.start();
-      this.ground.start();
-      Resources.BackgroundMusic.play();
+    const startGame = () => {
+      this.engine.input.keyboard.off('press', keyboardHandler);
+      this.reset();
+    };
+
+    const keyboardHandler = (evt: KeyEvent) => {
+      if (evt.key === Keys.Space) {
+        startGame();
+      }
+    };
+
+    this.engine.input.pointers.once('down', () => {
+      startGame();
     });
+
+    this.engine.input.keyboard.on('press', keyboardHandler);
   }
 
   reset() {
     this.bird.reset();
     this.pipeFactory.reset();
-    this.score = 0;
-    this.scoreLabel.text = `Score: ${this.score}`;
-  }
+    this.scoreboard.reset();
+    this.menu.hide();
+    this.bird.start();
+    this.pipeFactory.start();
+    this.ground.start();
 
-  incrementScore() {
-    this.scoreLabel.text = `Score: ${++this.score}`;
-    this.setBestScore(this.score);
-  }
-
-  setBestScore(score: number) {
-    if (score > this.bestScore) {
-      localStorage.setItem('bestScore', this.score.toString());
-      this.bestScore = score;
-    }
-
-    this.bestScoreLabel.text = `Best score: ${this.bestScore}`;
+    Resources.BackgroundMusic.play();
   }
 
   triggerGameOver() {
     this.pipeFactory.stop();
-    this.bird.stop();
+    this.bird.die();
+    // this.bird.stop();
     this.ground.stop();
-    this.showStartInstructions();
+    this.showMenu();
+
     Resources.BackgroundMusic.stop();
     Resources.FailSound.play();
   }

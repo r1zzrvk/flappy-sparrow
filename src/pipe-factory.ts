@@ -1,18 +1,20 @@
-import * as ex from 'excalibur';
+
+import { Random, Scene, Timer, vec } from 'excalibur';
 import { Config } from '../config';
 import { Pipe } from './pipe';
 import { ScoreTrigger } from './score-trigger';
-import { Level } from './level';
+import { Scoreboard } from './scoreboard';
 
 export class PipeFactory {
-  private timer: ex.Timer;
+  private timer: Timer;
 
   constructor(
-    private level: ex.Scene,
-    private random: ex.Random,
-    intervalMs: number
+    private level: Scene,
+    private random: Random,
+    intervalMs: number,
+    private scoreboard: Scoreboard
   ) {
-    this.timer = new ex.Timer({
+    this.timer = new Timer({
       interval: intervalMs,
       repeats: true,
       action: () => this.spawnPipes(),
@@ -27,14 +29,14 @@ export class PipeFactory {
     );
 
     const bottomPipe = new Pipe(
-      ex.vec(
+      vec(
         this.level.engine.screen.drawWidth,
         randonPipePos + Config.PipeGap
       ),
       'bottom'
     );
     const topPipe = new Pipe(
-      ex.vec(this.level.engine.screen.drawWidth, randonPipePos),
+      vec(this.level.engine.screen.drawWidth, randonPipePos),
       'top'
     );
 
@@ -42,8 +44,8 @@ export class PipeFactory {
     this.level.add(topPipe);
 
     const scoreTrigger = new ScoreTrigger(
-      ex.vec(this.level.engine.screen.drawWidth, randonPipePos),
-      this.level as Level
+      vec(this.level.engine.screen.drawWidth, randonPipePos),
+      this.scoreboard
     );
 
     this.level.add(scoreTrigger);
@@ -65,7 +67,7 @@ export class PipeFactory {
     this.timer.stop();
     for (const actor of this.level.actors) {
       if (actor instanceof Pipe || actor instanceof ScoreTrigger) {
-        actor.vel = ex.vec(0, 0);
+        actor.vel = vec(0, 0);
       }
     }
   }
