@@ -74,7 +74,6 @@ export class Level extends Scene {
   triggerGameOver() {
     this.pipeFactory.stop();
     this.bird.die();
-    // this.bird.stop();
     this.ground.stop();
     this.showMenu();
 

@@ -3,7 +3,7 @@ import { Pipe } from './pipe';
 import { Config } from '../config';
 import { Level } from './level';
 import { Resources } from './resources';
-import { Actor, Animation, AnimationStrategy, clamp, Collider, Engine, Keys, SpriteSheet, vec } from 'excalibur';
+import { Actor, Animation, AnimationStrategy, clamp, Collider, Engine, EasingFunctions, Keys, SpriteSheet, vec } from 'excalibur';
 
 export class Bird extends Actor {
   playing = false;
@@ -93,7 +93,9 @@ export class Bird extends Actor {
 
   override onCollisionStart(_self: Collider, other: Collider): void {
     if (other.owner instanceof Ground || other.owner instanceof Pipe) {
-      this.level.triggerGameOver();
+      if (this.playing) {
+        this.level.triggerGameOver();
+      }
     }
   }
 
@@ -116,10 +118,23 @@ export class Bird extends Actor {
   }
 
   die() {
-    this.pos = vec(this.pos.x, 600);
+    const targetY = 600;
+    const fallSpeed = Config.BirdFallSpeed;
+
     this.rotation = Config.BirdRotationAngle;
     this.graphics.use('death');
     this.jumping = false;
+
+    this.actions.clearActions();
     this.stop();
+
+    if (this.pos.y >= targetY) {
+      this.pos = vec(this.pos.x, targetY);
+      return;
+    }
+
+    const durationMs = Math.max(200, ((targetY - this.pos.y) / fallSpeed) * 1000);
+
+    this.actions.easeTo(vec(this.pos.x, targetY), durationMs, EasingFunctions.EaseInQuad);
   }
 }

@@ -8,6 +8,7 @@ const birdConfig = {
   BirdMinVelocity: -500, // minimum velocity of the bird when falling
   BirdMaxVelocity: 500, // maximum velocity of the bird when falling
   BirdRotationAngle: 1800, // angle of the bird's rotation
+  BirdFallSpeed: 600, // speed of the bird when falling
 } as const;
 
 const pipeConfig = {
