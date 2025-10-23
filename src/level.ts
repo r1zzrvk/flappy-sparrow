@@ -56,7 +56,10 @@ export class Level extends Scene {
     this.pipeFactory.stop();
     this.bird.die();
     this.ground.stop();
-    this.showMenu();
+
+    setTimeout(() => {
+      this.showMenu();
+    }, 1000);
 
     Resources.BackgroundMusic.stop();
     Resources.FailSound.play();
