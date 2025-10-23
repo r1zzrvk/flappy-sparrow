@@ -14,6 +14,8 @@ export class Scoreboard extends Actor {
     font: new Font({
       size: 20,
       color: Color.White,
+      bold: true,
+      strokeColor: Color.Black,
     }),
   });
 
@@ -26,22 +28,10 @@ export class Scoreboard extends Actor {
       size: 20,
       color: Color.White,
       textAlign: TextAlign.End,
+      bold: true,
+      strokeColor: Color.Black,
     }),
   });
-
-  override onInitialize(engine: Engine): void {
-    engine.add(this.scoreLabel);
-    engine.add(this.bestScoreLabel);
-
-    const bestScore = localStorage.getItem('bestScore');
-  
-    if (bestScore) {
-      this.bestScore = +bestScore;
-      this.setBestScore(Number(bestScore));
-    } else {
-      this.setBestScore(0);
-    }
-  }
 
   incrementScore() {
     this.scoreLabel.text = `Score: ${++this.score}`;
@@ -60,5 +50,19 @@ export class Scoreboard extends Actor {
   reset() {
     this.score = 0;
     this.scoreLabel.text = `Score: ${this.score}`;
+  }
+
+  override onInitialize(engine: Engine): void {
+    engine.add(this.scoreLabel);
+    engine.add(this.bestScoreLabel);
+
+    const bestScore = localStorage.getItem('bestScore');
+  
+    if (bestScore) {
+      this.bestScore = +bestScore;
+      this.setBestScore(Number(bestScore));
+    } else {
+      this.setBestScore(0);
+    }
   }
 }

@@ -17,24 +17,29 @@ export class Background extends Actor {
     })
   }
 
-  override onPreUpdate(_engine: ex.Engine, delta: number): void {
-    if (!this.moving) return;
-    this.backgroundOffset += (this.backgroundSpeed * delta) / 1000;
-
-    const imageWidth = Resources.BackgroundImage.width;
-    this.backgroundSprite.sourceView.x = this.backgroundOffset % imageWidth;
-  }
-
-  override onInitialize(): void {
-    this.start();
-    this.graphics.use(this.backgroundSprite);
-  }
-
   start() {
     this.moving = true;
   }
 
   stop() {
     this.moving = false;
+  }
+
+  private updateBackgroundOffset(delta: number) {
+    this.backgroundOffset += (this.backgroundSpeed * delta) / 1000;
+
+    const imageWidth = Resources.BackgroundImage.width;
+    this.backgroundSprite.sourceView.x = this.backgroundOffset % imageWidth;
+  }
+
+  override onPreUpdate(_engine: ex.Engine, delta: number): void {
+    if (!this.moving) return;
+
+    this.updateBackgroundOffset(delta);
+  }
+
+  override onInitialize(): void {
+    this.start();
+    this.graphics.use(this.backgroundSprite);
   }
 }

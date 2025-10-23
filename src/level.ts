@@ -10,7 +10,6 @@ import { Background } from './background';
 import { Engine, KeyEvent, Keys, Random, Scene, vec } from 'excalibur';
 
 export class Level extends Scene {
-
   background = new Background();
   random = new Random()
   scoreboard = new Scoreboard();
@@ -19,24 +18,6 @@ export class Level extends Scene {
   ground!: Ground;
   menu = new Menu(vec(0, 0), this);
 
-
-  override onActivate(): void {
-    Resources.BackgroundMusic.loop = true;
-    Resources.BackgroundMusic.volume = 0.5;
-  }
-
-  override onInitialize(engine: Engine): void {
-
-    this.ground = new Ground(vec(0, engine.screen.drawHeight - 64));
-
-    this.add(this.bird);
-    this.add(this.menu);
-    this.add(this.background);
-    this.add(this.scoreboard);
-    this.add(this.ground)
-    
-    this.showMenu();
-  }
 
   showMenu() {
     this.menu.show();
@@ -79,5 +60,23 @@ export class Level extends Scene {
 
     Resources.BackgroundMusic.stop();
     Resources.FailSound.play();
+  }
+
+  override onActivate(): void {
+    Resources.BackgroundMusic.loop = true;
+    Resources.BackgroundMusic.volume = 0.5;
+  }
+
+  override onInitialize(engine: Engine): void {
+
+    this.ground = new Ground(vec(0, engine.screen.drawHeight - 64));
+
+    this.add(this.bird);
+    this.add(this.menu);
+    this.add(this.background);
+    this.add(this.scoreboard);
+    this.add(this.ground)
+    
+    this.showMenu();
   }
 }

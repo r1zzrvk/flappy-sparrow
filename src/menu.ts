@@ -14,19 +14,17 @@ export class Menu extends Actor {
   }
 
   startGameLabel = new Label({
-    text: 'Tap or press Space to Start',
-    x: 200,
+    text: 'Tap to Start',
+    x: 100,
     y: 200,
     z: 2,
     font: new Font({
       size: 30,
       color: Color.White,
+      bold: true,
+      strokeColor: Color.Black,
     }),
   });
-
-  onInitialize(): void {
-    this.level.add(this.startGameLabel);
-  }
 
   show() {
     this.visible = true;
@@ -36,5 +34,9 @@ export class Menu extends Actor {
   hide() {
     this.visible = false;
     this.startGameLabel.graphics.isVisible = false;
+  }
+
+  override onInitialize(): void {
+    this.level.add(this.startGameLabel);
   }
 }

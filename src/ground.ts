@@ -24,7 +24,7 @@ export class Ground extends Actor {
     this.moving = false;
   }
 
-  onInitialize(engine: Engine): void {
+  override onInitialize(engine: Engine): void {
     this.groundSprite.sourceView.width = engine.screen.drawWidth;
     this.groundSprite.destSize.width = engine.screen.drawWidth;
 

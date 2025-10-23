@@ -2,7 +2,8 @@ import * as ex from 'excalibur'
 
 const birdConfig = {
   BirdSize: 64, // body size of the bird
-  BirdStartPos: ex.vec(200,300), // starting position of the bird
+  BirdStartPosDesktop: ex.vec(200, 300), // starting position of the bird
+  BirdStartPosMobile: ex.vec(100, 300), // starting position of the bird
   BirdAcceleration: 1200, // acceleration of the bird when falling
   BirdJumpVelocity: -800, // velocity of the bird when jumping (speed up when pressing space)
   BirdMinVelocity: -500, // minimum velocity of the bird when falling
