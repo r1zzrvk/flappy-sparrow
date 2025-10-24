@@ -22,7 +22,6 @@ export class Menu extends Actor {
       size: 30,
       color: Color.White,
       bold: true,
-      strokeColor: Color.Black,
     }),
   });
 

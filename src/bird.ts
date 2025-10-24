@@ -26,6 +26,7 @@ export class Bird extends Actor {
     super({
       pos: Config.BirdStartPosDesktop,
       radius: Config.BirdSize / 3,
+      z: 2,
     });
   }
 
@@ -133,7 +134,10 @@ export class Bird extends Actor {
   }
 
   die() {
-    const targetY = 600;
+    const engineHeight = this.scene?.engine.screen.drawHeight;
+    const groundTop =
+      this.level.ground?.pos.y ?? (engineHeight ? engineHeight - 64 : 600);
+    const targetY = groundTop;
     const fallSpeed = Config.BirdFallSpeed;
 
     this.rotation = Config.BirdRotationAngle;

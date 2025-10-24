@@ -15,7 +15,6 @@ export class Scoreboard extends Actor {
       size: 20,
       color: Color.White,
       bold: true,
-      strokeColor: Color.Black,
     }),
   });
 
@@ -29,7 +28,6 @@ export class Scoreboard extends Actor {
       color: Color.White,
       textAlign: TextAlign.End,
       bold: true,
-      strokeColor: Color.Black,
     }),
   });
 
