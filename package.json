@@ -2,14 +2,16 @@
   "name": "flappy-excalibur",
   "version": "1.0.0",
   "description": "Clone of Flappy Bird game using Excalibur.js",
-  "main": "src/main.ts",
- "scripts": {
+  "main": "index.js",
+  "scripts": {
     "start": "vite",
     "build": "tsc && vite build",
     "serve": "vite preview",
     "type-check": "tsc --noEmit"
-},
+  },
   "author": "",
+  "bugs": {},
+  "homepage": "",
   "license": "ISC",
   "devDependencies": {
     "typescript": "5.9.3",
